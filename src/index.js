@@ -1,1 +1,1 @@
-export {default as createProcess} from './process'
+export {default as createProcessor} from './process'

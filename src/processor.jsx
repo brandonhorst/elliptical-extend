@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import {createElement} from 'elliptical'
 
-export default function createProcess (extensions) {
+export default function createProcessor (extensions) {
   return function process (element) {
     // you can't extend builtins or element without describe
     if (_.isString(element) || !element.type.describe) return element
@@ -18,14 +18,30 @@ export default function createProcess (extensions) {
 
     if (theseExtensions.length) {
       function newDescribe (model) {
+        const description = element.type.describe(model)
+        let outputElement = description
+        if (element.type.mapResult) {
+          function mapResult (option) {
+            const result = element.type.mapResult(option.result)
+            return _.assign({}, option, {result})
+          }
+          outputElement = (
+            <map outbound={mapResult} skipIncomplete>
+              {description}
+            </map>
+          )
+        }
         return (
           <choice>
-            {element.type.describe(model)}
+            {outputElement}
             {theseExtensions}
           </choice>
         )
       }
-      const newPhrase = _.assign({}, element.type, {describe: newDescribe})
+      const newPhrase = _.assign({}, element.type, {
+        describe: newDescribe,
+        mapResult: undefined
+      })
       return _.assign({}, element, {type: newPhrase})
     } else {
       return element

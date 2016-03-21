@@ -2,7 +2,6 @@
 /* eslint-env mocha */
 import { createElement, compile } from 'elliptical'
 import { text, compileAndTraverse } from './_util'
-import createProcess from '../src/process'
 import { expect } from 'chai'
 
 describe('extends', () => {
@@ -132,9 +131,9 @@ describe('extends', () => {
     expect(data[1].result.test).to.equal('b')
   })
 
-  it('respects validate of extended', () => {
+  it('respects filterResult of extended', () => {
     const Noop = {
-      validate (result) {
+      filterResult (result) {
         return result === 'test2'
       },
       describe () {
@@ -156,5 +155,30 @@ describe('extends', () => {
     expect(data).to.have.length(1)
     expect(text(data[0])).to.equal('test2')
     expect(data[0].result).to.equal('test2')
+  })
+
+  it('does mapResult for original, not extender', () => {
+    const Extended = {
+      mapResult () {
+        return 'another'
+      },
+      describe () {
+        return <literal text='test1' value='test1' />
+      }
+    }
+
+    const Extender = {
+      extends: [Extended],
+      describe () {
+        return <literal text='test2' value='test2' />
+      }
+    }
+
+    const data = compileAndTraverse(<Extended />, '', [Extender])
+    expect(data).to.have.length(2)
+    expect(text(data[0])).to.equal('test1')
+    expect(data[0].result).to.equal('another')
+    expect(text(data[1])).to.equal('test2')
+    expect(data[1].result).to.equal('test2')
   })
 })
