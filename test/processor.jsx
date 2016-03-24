@@ -194,7 +194,12 @@ describe('extends', () => {
 
     const Extender = {
       extends: [Extended],
-      mapResult (result) {
+      mapResult (result, element) {
+        expect(element).to.eql({
+          type: Extender,
+          props: {id: undefined},
+          children: []
+        })
         return result + 'y'
       },
       describe () {
