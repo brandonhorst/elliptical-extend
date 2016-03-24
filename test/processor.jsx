@@ -159,8 +159,8 @@ describe('extends', () => {
 
   it('does mapResult of extended', () => {
     const Extended = {
-      mapResult () {
-        return 'another'
+      mapResult (result) {
+        return result + 'x'
       },
       describe () {
         return <literal text='test1' value='test1' />
@@ -177,8 +177,36 @@ describe('extends', () => {
     const data = compileAndTraverse(<Extended />, '', [Extender])
     expect(data).to.have.length(2)
     expect(text(data[0])).to.equal('test1')
-    expect(data[0].result).to.equal('another')
+    expect(data[0].result).to.equal('test1x')
     expect(text(data[1])).to.equal('test2')
-    expect(data[1].result).to.equal('another')
+    expect(data[1].result).to.equal('test2x')
+  })
+
+  it('calls mapResult of extender', () => {
+    const Extended = {
+      mapResult (result) {
+        return result + 'x'
+      },
+      describe () {
+        return <literal text='test1' value='test1' />
+      }
+    }
+
+    const Extender = {
+      extends: [Extended],
+      mapResult (result) {
+        return result + 'y'
+      },
+      describe () {
+        return <literal text='test2' value='test2' />
+      }
+    }
+
+    const data = compileAndTraverse(<Extended />, '', [Extender])
+    expect(data).to.have.length(2)
+    expect(text(data[0])).to.equal('test1')
+    expect(data[0].result).to.equal('test1x')
+    expect(text(data[1])).to.equal('test2')
+    expect(data[1].result).to.equal('test2yx')
   })
 })
