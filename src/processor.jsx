@@ -19,29 +19,14 @@ export default function createProcessor (extensions) {
     if (theseExtensions.length) {
       function newDescribe (model) {
         const description = element.type.describe(model)
-        let outputElement = description
-        if (element.type.mapResult) {
-          function mapResult (option) {
-            const result = element.type.mapResult(option.result)
-            return _.assign({}, option, {result})
-          }
-          outputElement = (
-            <map outbound={mapResult} skipIncomplete>
-              {description}
-            </map>
-          )
-        }
         return (
           <choice>
-            {outputElement}
+            {description}
             {theseExtensions}
           </choice>
         )
       }
-      const newPhrase = _.assign({}, element.type, {
-        describe: newDescribe,
-        mapResult: undefined
-      })
+      const newPhrase = _.assign({}, element.type, {describe: newDescribe})
       return _.assign({}, element, {type: newPhrase})
     } else {
       return element

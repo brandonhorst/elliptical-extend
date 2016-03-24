@@ -157,7 +157,7 @@ describe('extends', () => {
     expect(data[0].result).to.equal('test2')
   })
 
-  it('does mapResult for original, not extender', () => {
+  it('does mapResult of extended', () => {
     const Extended = {
       mapResult () {
         return 'another'
@@ -179,6 +179,6 @@ describe('extends', () => {
     expect(text(data[0])).to.equal('test1')
     expect(data[0].result).to.equal('another')
     expect(text(data[1])).to.equal('test2')
-    expect(data[1].result).to.equal('test2')
+    expect(data[1].result).to.equal('another')
   })
 })
