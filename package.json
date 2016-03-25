@@ -1,6 +1,6 @@
 {
   "name": "elliptical-extend",
-  "version": "1.0.0-rc4",
+  "version": "1.0.0-rc5",
   "description": "Linguistic Extension for Elliptical phrases",
   "main": "lib/index.js",
   "scripts": {
