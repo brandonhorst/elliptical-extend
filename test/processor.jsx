@@ -18,13 +18,14 @@ describe('extends', () => {
 
   it('handles phrases that return null to be extended', () => {
     const Noop = {
+      id: 'noop',
       describe () {
         return null
       }
     }
 
     const Extender = {
-      extends: [Noop],
+      extends: ['noop'],
       describe () {
         return <literal text='test' />
       }
@@ -37,11 +38,12 @@ describe('extends', () => {
 
   it('handles phrases with extends', () => {
     const Extended = {
+      id: 'extended',
       describe () { return <literal text='test a' value='a' /> }
     }
 
     const Extender = {
-      extends: [Extended],
+      extends: ['extended'],
       describe () { return <literal text='test b' value='b' /> }
     }
 
@@ -54,16 +56,17 @@ describe('extends', () => {
 
   it('handles phrases extended multiple times', () => {
     const Extended = {
+      id: 'extended',
       describe () { return <literal text='test a' value='a' /> }
     }
 
     const Extender1 = {
-      extends: [Extended],
+      extends: ['extended'],
       describe () { return <literal text='test b' value='b' /> }
     }
 
     const Extender2 = {
-      extends: [Extended],
+      extends: ['extended'],
       describe () { return <literal text='test c' value='c' /> }
     }
 
@@ -79,6 +82,7 @@ describe('extends', () => {
 
   it('handles recursive phrases with extends', () => {
     const Extended = {
+      id: 'extended',
       describe ({props}) {
         return (
           <sequence>
@@ -90,7 +94,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: [Extended],
+      extends: ['extended'],
       describe () {
         return <literal text='b' value='b' />
       }
@@ -115,11 +119,12 @@ describe('extends', () => {
     }
 
     const Extended = {
+      id: 'extended',
       describe () { return <literal text='a' value='a' /> }
     }
 
     const Extender = {
-      extends: [Extended],
+      extends: ['extended'],
       describe () { return <literal text='b' value='b' /> }
     }
 
@@ -133,6 +138,7 @@ describe('extends', () => {
 
   it('respects filterResult of extended', () => {
     const Noop = {
+      id: 'noop',
       filterResult (result) {
         return result === 'test2'
       },
@@ -142,7 +148,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: [Noop],
+      extends: ['noop'],
       describe () {
         return <list items={[
           {text: 'test1', value: 'test1'},
@@ -159,6 +165,7 @@ describe('extends', () => {
 
   it('does mapResult of extended', () => {
     const Extended = {
+      id: 'extended',
       mapResult (result) {
         return result + 'x'
       },
@@ -168,7 +175,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: [Extended],
+      extends: ['extended'],
       describe () {
         return <literal text='test2' value='test2' />
       }
@@ -184,6 +191,7 @@ describe('extends', () => {
 
   it('calls mapResult of extender', () => {
     const Extended = {
+      id: 'extended',
       mapResult (result) {
         return result + 'x'
       },
@@ -193,7 +201,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: [Extended],
+      extends: ['extended'],
       mapResult (result, element) {
         expect(element).to.eql({
           type: Extender,

@@ -8,7 +8,7 @@ export default function createProcessor (extensions) {
     if (_.isString(element)) return element
 
     const theseExtensions = _.chain(extensions)
-      .filter((extension) => _.includes(extension.extends, element.type))
+      .filter((extension) => _.includes(extension.extends, element.type.id))
       .map((extension) => {
         const newProps = _.assign({}, element.props, {id: undefined})
         return _.assign({}, element, {type: extension}, {props: newProps})
@@ -35,7 +35,7 @@ export default function createProcessor (extensions) {
       .value()
 
     if (theseExtensions.length) {
-      const newPhrase = _.clone(element.type) // to prevent duplicate extension
+      const newPhrase = _.assign({}, element.type, {id: undefined}) // to prevent duplicate extension
       const newProps = _.assign({}, element.props, {id: undefined})
       const newElement = _.assign({}, element, {type: newPhrase}, {props: newProps})
       function describe (model) {
