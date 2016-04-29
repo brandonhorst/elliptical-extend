@@ -25,7 +25,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: ['noop'],
+      extends: [Noop],
       describe () {
         return <literal text='test' />
       }
@@ -36,6 +36,79 @@ describe('extends', () => {
     expect(text(data[0])).to.equal('test')
   })
 
+
+  it('matches phrases that do not have an id', () => {
+    const Noop = {
+      describe () {
+        return null
+      }
+    }
+
+    const Extender = {
+      extends: [Noop],
+      describe () {
+        return <literal text='test' />
+      }
+    }
+
+    const data = compileAndTraverse(<Noop />, '', [Extender])
+    expect(data).to.have.length(1)
+    expect(text(data[0])).to.equal('test')
+  })
+
+  it('handles phrases that have the same id, even if they are different instances', () => {
+    const NoopReal = {
+      id: 'noop',
+      describe () {
+        return null
+      }
+    }
+
+    const NoopFake = {
+      id: 'noop',
+      describe () {
+        return null
+      }
+    }
+
+    const Extender = {
+      extends: [NoopFake],
+      describe () {
+        return <literal text='test' />
+      }
+    }
+
+    const data = compileAndTraverse(<NoopReal />, '', [Extender])
+    expect(data).to.have.length(1)
+    expect(text(data[0])).to.equal('test')
+  })
+
+  it('does not match phrases if they are different and do not share id', () => {
+    const NoopReal = {
+      id: 'noop-real',
+      describe () {
+        return null
+      }
+    }
+
+    const NoopFake = {
+      id: 'noop-fake',
+      describe () {
+        return null
+      }
+    }
+
+    const Extender = {
+      extends: [NoopFake],
+      describe () {
+        return <literal text='test' />
+      }
+    }
+
+    const data = compileAndTraverse(<NoopReal />, '', [Extender])
+    expect(data).to.have.length(0)
+  })
+
   it('handles phrases with extends', () => {
     const Extended = {
       id: 'extended',
@@ -43,7 +116,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: ['extended'],
+      extends: [Extended],
       describe () { return <literal text='test b' value='b' /> }
     }
 
@@ -61,12 +134,12 @@ describe('extends', () => {
     }
 
     const Extender1 = {
-      extends: ['extended'],
+      extends: [Extended],
       describe () { return <literal text='test b' value='b' /> }
     }
 
     const Extender2 = {
-      extends: ['extended'],
+      extends: [Extended],
       describe () { return <literal text='test c' value='c' /> }
     }
 
@@ -94,7 +167,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: ['extended'],
+      extends: [Extended],
       describe () {
         return <literal text='b' value='b' />
       }
@@ -124,7 +197,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: ['extended'],
+      extends: [Extended],
       describe () { return <literal text='b' value='b' /> }
     }
 
@@ -148,7 +221,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: ['noop'],
+      extends: [Noop],
       describe () {
         return <list items={[
           {text: 'test1', value: 'test1'},
@@ -175,7 +248,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: ['extended'],
+      extends: [Extended],
       describe () {
         return <literal text='test2' value='test2' />
       }
@@ -201,7 +274,7 @@ describe('extends', () => {
     }
 
     const Extender = {
-      extends: ['extended'],
+      extends: [Extended],
       mapResult (result, element) {
         expect(element).to.eql({
           type: Extender,

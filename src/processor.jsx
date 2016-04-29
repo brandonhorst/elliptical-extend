@@ -2,13 +2,24 @@
 import _ from 'lodash'
 import {createElement} from 'elliptical'
 
+const compareTypes = (element) => (extension) => {
+  // if the two refer to the same object
+  if (_.includes(extension.extends, element.type)) {
+    return true
+  }
+  return _.find(extension.extends, (extended) => {
+    return extended.id && element.type && element.type.id &&
+      extended.id === element.type.id
+  })
+}
+
 export default function createProcessor (extensions) {
   return function process (element) {
     // you can't extend builtins
     if (_.isString(element)) return element
 
     const theseExtensions = _.chain(extensions)
-      .filter((extension) => _.includes(extension.extends, element.type.id))
+      .filter(compareTypes(element))
       .map((extension) => {
         const newProps = _.assign({}, element.props, {id: undefined})
         return _.assign({}, element, {type: extension}, {props: newProps})
@@ -36,7 +47,7 @@ export default function createProcessor (extensions) {
 
     if (theseExtensions.length) {
       const newPhrase = _.assign({}, element.type, {id: undefined}) // to prevent duplicate extension
-      const newProps = _.assign({}, element.props, {id: undefined})
+      const newProps = _.assign({}, element.props, {id: undefined}) // to prevent problems with choices/sequences
       const newElement = _.assign({}, element, {type: newPhrase}, {props: newProps})
       function describe (model) {
         return (
