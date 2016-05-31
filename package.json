@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha --compilers jsx:babel-register --watch-extensions jsx",
-    "build": "mkdir -p build; babel src --out-dir lib",
+    "build": "babel src --out-dir lib",
     "clean": "rimraf lib",
     "prepublish": "npm run clean && npm run build"
   },
