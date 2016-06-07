@@ -1,5 +1,6 @@
 /** @jsx createElement */
 /* eslint-env mocha */
+import _ from 'lodash'
 import { createElement, compile } from 'elliptical'
 import { text, compileAndTraverse } from './_util'
 import { expect } from 'chai'
@@ -151,6 +152,50 @@ describe('extends', () => {
     expect(data[1].result).to.equal('b')
     expect(text(data[2])).to.equal('test c')
     expect(data[2].result).to.equal('c')
+  })
+
+  it('passes props to extended', () => {
+    const Extended = {
+      id: 'extended',
+      describe ({props}) {
+        expect(props.x).to.equal(1)
+        return <literal text='a' value='a' />
+      }
+    }
+
+    const Extender = {
+      extends: [Extended],
+      describe ({props}) {
+        expect(props.x).to.equal(1)
+        return <literal text='b' value='b' />
+      }
+    }
+
+    const data = compileAndTraverse(<Extended x={1} />, '', [Extender])
+    expect(data).to.have.length(2)
+  })
+
+  it('passes RegExp props to extended', () => {
+    const Extended = {
+      id: 'extended',
+      describe ({props}) {
+        expect(_.isRegExp(props.x)).to.be.true
+        expect(props.x).to.eql(/test/)
+        return <literal text='a' value='a' />
+      }
+    }
+
+    const Extender = {
+      extends: [Extended],
+      describe ({props}) {
+        expect(_.isRegExp(props.x)).to.be.true
+        expect(props.x).to.eql(/test/)
+        return <literal text='b' value='b' />
+      }
+    }
+
+    const data = compileAndTraverse(<Extended x={/test/} />, '', [Extender])
+    expect(data).to.have.length(2)
   })
 
   it('handles recursive phrases with extends', () => {
